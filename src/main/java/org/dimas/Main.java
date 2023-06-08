@@ -1,5 +1,8 @@
 package org.dimas;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 
 public class Main {
@@ -8,25 +11,32 @@ public class Main {
     private static final List<Transaksi> transaksiList = new ArrayList<>();
 
     public static void main(String[] args) {
-        String input = "agus-motor\n"
-                + "agus-mobil\n"
-                + "indra-mobil\n"
-                + "isi;indra-mobil;3\n"
-                + "isi;agus-motor;2\n"
-                + "data pembeli\n"
-                + "data transaksi\n"
-                + "total;motor\n"
-                + "cek;agus\n"
-                + "refill;agus-motor\n"
-                + "data pembeli";
 
-        String[] commands = input.split("\n");
-        for (String command : commands) {
-            executeCommand(command);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
+        try {
+            StringBuilder inputBuilder = new StringBuilder();
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                if (line.isEmpty()) {
+                    break;
+                }
+
+                inputBuilder.append(line).append(System.lineSeparator());
+            }
+
+            String[] input = inputBuilder.toString().split("\n");
+            for(String word : input){
+                executeCommands(word);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
     }
 
-    private static void executeCommand(String command) {
+    private static void executeCommands(String command) {
         String[] parts = command.split(";");
         String action = parts[0];
 
@@ -64,10 +74,14 @@ public class Main {
                 break;
             default: {
                 String[] data = command.split("-");
-                String nama = data[0];
-                String jenisKendaraan = data[1];
-                registerPembeli(nama, jenisKendaraan);
-                break;
+                if(data.length == 1){
+                    break;
+                } else {
+                    String nama = data[0];
+                    String jenisKendaraan = data[1];
+                    registerPembeli(nama, jenisKendaraan);
+                    break;
+                }
             }
         }
     }
